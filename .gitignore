@@ -1,0 +1,15 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Miscellanous ###
+*.xls*
+*.xlsx*
+*.pdf
+
+### Python ###
+/venv/
+/uvenv/
+/__pycache__/
