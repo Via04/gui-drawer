@@ -1,0 +1,11 @@
+cycler
+et-xmlfile
+kiwisolver
+matplotlib
+numpy
+openpyxl
+Pillow
+pyparsing
+PySimpleGUI
+python-dateutil
+six
