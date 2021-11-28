@@ -27,6 +27,8 @@ while True:
         PlotHelper.plot_array(x_list, y_list)
     if event == 'Создание модели':
         model_layout = [[gui.Multiline(key='-MODEL-', size=(100, 30)), gui.Button('Create', visible=True)],
+                        [gui.Text('Мин'), gui.In(key='-MIN-X-', default_text='0'),
+                         gui.Text('Макс'), gui.In(key='-MAX-X-', default_text='100')],
                         [gui.InputText(key='-SAVE-MOD-', enable_events=True, visible=False),
                          gui.FileSaveAs('Save', target='-SAVE-MOD-', file_types=(('PYDATA', '.pydat'),),
                                         initial_folder=curdir)]]
@@ -34,7 +36,9 @@ while True:
         while True:
             mod_evt, mod_val = mod_window.read()
             if mod_evt == 'Create':
-                plot = PlotHelper(0, 100, 100)
+                min_x = int(mod_val['-MIN-X-'])
+                max_x = int(mod_val['-MAX-X-'])
+                plot = PlotHelper(min_x, max_x, 100)
                 model = mod_val['-MODEL-']
                 plot_layout = [[gui.Text('Model')], [gui.Canvas(key='-CANVAS-')]]
                 fig = plot.get_figure(model)

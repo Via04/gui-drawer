@@ -17,6 +17,8 @@ class PlotHelper:
     max_x = 0
     complexity = 0
     x = None
+    fig = None
+    ax = None
 
     def __init__(self, min_x=0, max_x=0, complexity=100, param_marker='p_', val_marker='v_',
                  usr_func_marker='u_'):
@@ -27,6 +29,8 @@ class PlotHelper:
         self.max_x = max_x
         self.complexity = complexity
         self.x = np.linspace(min_x, max_x, complexity)
+        self.fig = plt.figure(figsize=(6, 5))
+        self.ax = self.fig.add_subplot(1, 1, 1)
 
     def ans_expr(self, expr: str) -> list:
         code = self.gen_pycode(expr)
@@ -55,32 +59,39 @@ class PlotHelper:
             return code
 
     def parse_expression(self, expr: str) -> str:
+        final_expr = ''
+        python_mode = False
         if expr is not None:
-            op_pattern = '\\s[A-XZa-xz]+\\s'
-            #  '\\s[^' + self.param_marker[:1] + self.val_marker[:1] + self.usr_func_marker[:1] + 'y' + \
-                          #  '\\W\\d][^' + self.param_marker + self.val_marker + self.usr_func_marker + ']?\\w*\\s'
-            # op_pattern = '\s[^pv\W][^__]?\w*\s'
-            val_pattern = '\\s' + self.val_marker + '\\w*\\s'
-            param_pattern = '\\s' + self.param_marker + '\\w*\\s'
-            ops = findall(op_pattern, expr)
-            vals = findall(val_pattern, expr)
-            params = findall(param_pattern, expr)
-            for op in ops:
-                new_op = op[:1] + 'np.' + op[1:]
-                expr = expr.replace(op, new_op)
-            for val in vals:
-                new_val = ' ' + val[3:-1] + ' '
-                expr = expr.replace(val, new_val)
-            for param in params:
-                new_param = ' ' + param[3:-1] + ' '
-                expr = expr.replace(param, new_param)
-            expr_without_space = ''
-            for line in expr:
-                if line[0:1] == ' ':
-                    expr_without_space += line[1:]
-                else:
-                    expr_without_space += line
-            return expr_without_space
+            for e in expr.split('\n'):
+                if e != '':
+                    if e[0] == '!':
+                        python_mode = not python_mode
+                        final_expr += '\n'
+                        continue
+                    if not python_mode:
+                        # op_pattern = '\\s[A-XZa-xz]+\\s(?<!\\spow\\s)'
+                        #  '\\s[^' + self.param_marker[:1] + self.val_marker[:1] + self.usr_func_marker[:1] + 'y' + \
+                                      #  '\\W\\d][^' + self.param_marker + self.val_marker + self.usr_func_marker + ']?\\w*\\s'
+                        # op_pattern = '\s[^pv\W][^__]?\w*\s'
+                        val_pattern = '\\s' + self.val_marker + '\\w*\\s'
+                        param_pattern = '\\s' + self.param_marker + '\\w*\\s'
+                        # ops = findall(op_pattern, expr)
+                        vals = findall(val_pattern, e)
+                        params = findall(param_pattern, e)
+                        # for op in ops:
+                        #     new_op = op[:1] + 'np.' + op[1:]
+                        #     expr = expr.replace(op, new_op)
+                        for val in vals:
+                            new_val = ' ' + val[3:-1] + ' '
+                            e = e.replace(val, new_val)
+                        for param in params:
+                            new_param = ' ' + param[3:-1] + ' '
+                            e = e.replace(param, new_param)
+                        expr_without_space = e.replace(' ', '')
+                    else:
+                        expr_without_space = e
+                    final_expr += expr_without_space
+            return final_expr
 
     def plot_expr(self, expr: str):
         y = self.ans_expr(expr)
@@ -88,13 +99,13 @@ class PlotHelper:
         plt.plot(x, y, 'ro-')
         plt.show()
 
-    def get_figure(self, expr):
-        y = self.ans_expr(expr)
-        x = self.x
-        fig = plt.figure(figsize=(5, 4))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.plot(x, y, (self.max_x - self.min_x) / self.complexity)
-        return fig
+    def get_figure(self, expr: str):
+        exprs = expr.split(';')
+        for e in exprs:
+            y = self.ans_expr(e)
+            x = self.x
+            self.ax.plot(x, y, (self.max_x - self.min_x) / self.complexity)
+        return self.fig
 
 
     @classmethod
