@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
-import matplotlib.figure
 from re import findall
+
+import matplotlib.pyplot as plt
 import numpy as np  # do not change np as it used as pattern addon
 
 
@@ -49,14 +49,14 @@ class PlotHelper:
         return py_code
 
     def save_to_file(self, expr: str, filename):
-        expr = self.parse_expression(expr)
+        # expr = self.parse_expression(expr)
         with open(filename, 'w') as f:
             f.write(expr)
 
     def read_from_file(self, filename):
-        with open(filename, 'rb') as f:
-            code = '\n'.join(f.readlines())
-            return code
+        with open(filename, 'r') as f:
+            expr = ''.join(f.readlines())
+            return expr
 
     def parse_expression(self, expr: str) -> str:
         final_expr = ''
@@ -71,7 +71,7 @@ class PlotHelper:
                     if not python_mode:
                         # op_pattern = '\\s[A-XZa-xz]+\\s(?<!\\spow\\s)'
                         #  '\\s[^' + self.param_marker[:1] + self.val_marker[:1] + self.usr_func_marker[:1] + 'y' + \
-                                      #  '\\W\\d][^' + self.param_marker + self.val_marker + self.usr_func_marker + ']?\\w*\\s'
+                        #  '\\W\\d][^' + self.param_marker + self.val_marker + self.usr_func_marker + ']?\\w*\\s'
                         # op_pattern = '\s[^pv\W][^__]?\w*\s'
                         val_pattern = '\\s' + self.val_marker + '\\w*\\s'
                         param_pattern = '\\s' + self.param_marker + '\\w*\\s'
@@ -90,7 +90,7 @@ class PlotHelper:
                         expr_without_space = e.replace(' ', '')
                     else:
                         expr_without_space = e
-                    final_expr += expr_without_space
+                    final_expr += expr_without_space + '\n'
             return final_expr
 
     def plot_expr(self, expr: str):
@@ -107,11 +107,9 @@ class PlotHelper:
             self.ax.plot(x, y, (self.max_x - self.min_x) / self.complexity)
         return self.fig
 
-
     @classmethod
     def plot_array(cls, x_list, y_list):
         plt.plot(x_list, y_list, 'ro-')
         plt.show()
-
 # test = PlotHelper(0, 2 * np.pi)
 # test.plot_expr(' -1 * log ( v_x )')

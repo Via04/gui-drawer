@@ -38,8 +38,8 @@ class XLSXParser:
             print("Error! Bad path!")
 
 
-test = XLSXParser('ruave_out.xlsx')
-out = test.get_column_values(2)
-print(out)
-print(len(out))
+# test = XLSXParser('ruave_out.xlsx')
+# out = test.get_column_values(2)
+# print(out)
+# print(len(out))
 
