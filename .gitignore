@@ -3,6 +3,7 @@
 *.iws
 *.iml
 *.ipr
+/.idea/
 
 ### Miscellanous ###
 *.xls*
@@ -13,3 +14,7 @@
 /venv/
 /uvenv/
 /__pycache__/
+
+### Build ###
+/build/
+/dist/

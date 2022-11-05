@@ -1,0 +1,5 @@
+!
+def test(x):
+     return 2 * np.log(x)
+!
+ y = test( v_x ) 
