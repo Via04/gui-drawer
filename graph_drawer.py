@@ -10,6 +10,7 @@ import numpy as np  # do not change np as it used as pattern addon
 # plt.show()
 
 class PlotHelper:
+    """ Класс для построения графиков по математическому описанию"""
     param_marker = ''
     val_marker = ''
     usr_func_marker = ''
@@ -31,7 +32,7 @@ class PlotHelper:
         self.x = np.linspace(min_x, max_x, complexity)
         self.fig = plt.figure(figsize=(6, 5))
         self.ax = self.fig.add_subplot(1, 1, 1)
-
+    #@timeit
     def ans_expr(self, expr: str) -> list:
         code = self.gen_pycode(expr)
         x = self.x
@@ -91,6 +92,13 @@ class PlotHelper:
                     else:
                         expr_without_space = e
                     final_expr += expr_without_space + '\n'
+            # final_expr += 'return y'
+            # final_expr = '  '.join(('\n' + final_expr.lstrip()).splitlines(True))
+            # if is_parallel:
+            #     final_expr = '@njit(parallel=True)\ndef myfunc(x):' + final_expr + '\ny = myfunc(x)'
+            # else:
+            #     final_expr = 'def myfunc(x):' + final_expr + '\ny = myfunc(x)'
+
             return final_expr
 
     def plot_expr(self, expr: str):
@@ -99,11 +107,25 @@ class PlotHelper:
         plt.plot(x, y, 'ro-')
         plt.show()
 
+    def get_text(self, expr: str) -> str:
+        out = ''
+        exprs = expr.split(';')
+        for e in exprs:
+            y = self.ans_expr(e)
+            x = self.x
+            for j in range(len(x)):
+                print(f'{y[j]}\t{x[j]}\n')
+                out += f'{y[j]}\t{x[j]}\n'
+        return out
+
     def get_figure(self, expr: str):
         exprs = expr.split(';')
         for e in exprs:
             y = self.ans_expr(e)
             x = self.x
+            ca = plt.gca()
+            ca.set_ylim([min(y), max(y)])
+            self.ax.grid(True)
             self.ax.plot(x, y, (self.max_x - self.min_x) / self.complexity)
         return self.fig
 
