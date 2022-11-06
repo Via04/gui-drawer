@@ -36,6 +36,7 @@ class PlotHelper:
     def ans_expr(self, expr: str) -> list:
         code = self.gen_pycode(expr)
         x = self.x
+        y = None
         _local = locals()
         exec(code, globals(), _local)
         y = _local['y']
@@ -43,8 +44,8 @@ class PlotHelper:
 
     def gen_pycode(self, expr: str):
         command = self.parse_expression(expr)
-        y = None
         x = self.x
+        y = None
         # command = 'y = ' + command  # if you change y name variable, also change this line
         py_code = compile(command, '<string>', 'exec')
         return py_code
