@@ -9,3 +9,4 @@ pyparsing
 PySimpleGUI
 python-dateutil
 six
+numba
