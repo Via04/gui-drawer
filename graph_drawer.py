@@ -3,6 +3,8 @@ from re import findall
 import matplotlib.pyplot as plt
 import numpy as np  # do not change np as it used as pattern addon
 
+from great_parser import SeriousParser
+
 
 # x = linspace(0, 2 * pi, 100)
 # y = sin(x)
@@ -10,7 +12,7 @@ import numpy as np  # do not change np as it used as pattern addon
 # plt.show()
 
 class PlotHelper:
-    """ Класс для построения графиков по математическому описанию"""
+    """Класс для построения графиков по математическому описанию"""
     param_marker = ''
     val_marker = ''
     usr_func_marker = ''
@@ -32,23 +34,13 @@ class PlotHelper:
         self.x = np.linspace(min_x, max_x, complexity)
         self.fig = plt.figure(figsize=(6, 5))
         self.ax = self.fig.add_subplot(1, 1, 1)
+        self._locals = locals()
     #@timeit
-    def ans_expr(self, expr: str) -> list:
-        code = self.gen_pycode(expr)
-        x = self.x
-        y = None
-        _local = locals()
-        exec(code, globals(), _local)
-        y = _local['y']
-        return y
-
-    def gen_pycode(self, expr: str):
+    def ans_expr(self, expr: str):
         command = self.parse_expression(expr)
-        x = self.x
-        y = None
-        # command = 'y = ' + command  # if you change y name variable, also change this line
-        py_code = compile(command, '<string>', 'exec')
-        return py_code
+        parser = SeriousParser(self.x)
+        y = parser.parse_exp(command)
+        return y
 
     def save_to_file(self, expr: str, filename):
         # expr = self.parse_expression(expr)
@@ -122,6 +114,8 @@ class PlotHelper:
     def get_figure(self, expr: str):
         exprs = expr.split(';')
         for e in exprs:
+            if e == '':
+                continue
             y = self.ans_expr(e)
             x = self.x
             ca = plt.gca()

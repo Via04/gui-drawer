@@ -81,9 +81,9 @@ while True:
                 if filename != '':
                     model = plot.read_from_file(filename)
                     mod_window['-MODEL-'].update(model)
-            for key, func in usr_model_functions:
-                if mod_evt == key:
-                    func(mod_evt, mod_val)
+            # for key, func in usr_model_functions:
+            #     if mod_evt == key:
+            #         func(mod_evt, mod_val)
             if mod_evt == gui.WINDOW_CLOSED:
                 break
         break
